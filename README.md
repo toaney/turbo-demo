@@ -1,135 +1,164 @@
-# Turborepo starter
+# Mental Math Game - Turborepo Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+A full-stack mental math practice application built with Next.js, TypeScript, Express, and PostgreSQL, organized as a Turborepo monorepo.
 
-## Using this example
-
-Run the following command:
-
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Project Structure
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+turbo-demo/
+├── apps/
+│   ├── api/          # Backend API (Express + PostgreSQL)
+│   ├── web/          # Frontend (Next.js)
+│   └── docs/         # Documentation site (Next.js)
+├── packages/
+│   ├── eslint-config/      # Shared ESLint configuration
+│   ├── typescript-config/  # Shared TypeScript configuration
+│   └── ui/                 # Shared UI components
+├── package.json
+├── turbo.json
+└── README.md
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Applications
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### `apps/api` - Backend API
+TypeScript Express server with PostgreSQL database for:
+- Generating math questions
+- Tracking question metrics (time spent, correctness, skips, reveals)
+- Storing question history
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+**See [apps/api/README.md](./apps/api/README.md) for detailed documentation.**
 
-### Develop
+### `apps/web` - Frontend Game
+Next.js application providing:
+- Landing page for game configuration
+- Interactive math game with timer
+- Flashcard-style question queue
+- Keyboard controls
+- Real-time metrics tracking
 
-To develop all apps and packages, run the following command:
+**See [apps/web/README.md](./apps/web/README.md) for detailed documentation.**
 
-```
-cd my-turborepo
+## Quick Start
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+### Prerequisites
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+1. **Node.js** 18+ and npm
+2. **PostgreSQL** 12+ (see backend README for installation)
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Setup
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+1. **Clone and install dependencies:**
+   ```bash
+   npm install
+   ```
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+2. **Set up PostgreSQL database:**
+   ```bash
+   # Create database
+   createdb mental_math
+   
+   # Or using psql:
+   psql -U postgres
+   CREATE DATABASE mental_math;
+   \q
+   ```
 
-### Remote Caching
+3. **Configure backend environment:**
+   ```bash
+   cd apps/api
+   cp .env.example .env
+   # Edit .env with your PostgreSQL credentials
+   ```
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+4. **Run database migration:**
+   ```bash
+   cd apps/api
+   npm run migrate
+   ```
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+5. **Start development servers:**
+   ```bash
+   # From root directory
+   npm run dev
+   ```
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+   This will start:
+   - Backend API on `http://localhost:3001`
+   - Frontend on `http://localhost:3000`
 
-```
-cd my-turborepo
+6. **Open the application:**
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+## Available Scripts
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+From the root directory:
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- `npm run dev` - Start all apps in development mode
+- `npm run build` - Build all apps
+- `npm run lint` - Lint all apps
+- `npm run check-types` - Type check all apps
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Features
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+### Game Features
+- ✅ Four operation types: Addition, Subtraction, Multiplication, Division
+- ✅ Three difficulty levels: Easy, Medium, Hard
+- ✅ Configurable time limit per question
+- ✅ Timer countdown for each question
+- ✅ Answer input with Enter key submission
+- ✅ Reveal answer button
+- ✅ Skip question button (Tab or Right Arrow)
+- ✅ Flashcard behavior: skipped questions reappear
+- ✅ Automatic answer reveal when timer expires
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+### Technical Features
+- ✅ Full TypeScript type safety
+- ✅ PostgreSQL database for persistence
+- ✅ Metrics tracking (time spent, correctness, skips, reveals)
+- ✅ Session-based tracking
+- ✅ Responsive design
+- ✅ Dark mode support
+- ✅ Keyboard shortcuts
 
-## Useful Links
+## Development
 
-Learn more about the power of Turborepo:
+This is a Turborepo monorepo, which means:
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- **Shared configurations**: ESLint and TypeScript configs are shared across apps
+- **Parallel execution**: Tasks run in parallel when possible
+- **Caching**: Turborepo caches build outputs for faster rebuilds
+- **Workspace dependencies**: Apps can depend on shared packages
+
+### Adding a New App
+
+1. Create directory in `apps/`
+2. Add to `package.json` workspaces (already configured)
+3. Add build task to `turbo.json` if needed
+
+### Shared Packages
+
+- `@repo/eslint-config`: Shared ESLint rules
+- `@repo/typescript-config`: Shared TypeScript configurations
+- `@repo/ui`: Shared React components
+
+## Troubleshooting
+
+### Backend won't start
+- Check PostgreSQL is running: `pg_isready`
+- Verify database credentials in `apps/api/.env`
+- Ensure database exists: `psql -U postgres -l | grep mental_math`
+
+### Frontend can't connect to backend
+- Verify backend is running on port 3001
+- Check `NEXT_PUBLIC_API_URL` in `apps/web/.env.local`
+- Ensure CORS is enabled (it is by default)
+
+### Database migration fails
+- Ensure you're connected to the correct database
+- Check user permissions
+- Verify tables don't already exist (safe to run multiple times)
+
+## License
+
+This project is part of a demo/tutorial project.
