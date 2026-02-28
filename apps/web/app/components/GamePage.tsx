@@ -77,7 +77,6 @@ export default function GamePage({ config, onBack }: GamePageProps) {
       startTimeRef.current = Date.now();
       if (inputRef.current) {
         inputRef.current.value = '';
-        inputRef.current.focus();
       }
       return;
     }
@@ -99,7 +98,6 @@ export default function GamePage({ config, onBack }: GamePageProps) {
       startTimeRef.current = Date.now();
       if (inputRef.current) {
         inputRef.current.value = '';
-        inputRef.current.focus();
       }
     }
   }, [questionQueue, generateQuestion, config.timeLimitSeconds]);
@@ -141,6 +139,21 @@ export default function GamePage({ config, onBack }: GamePageProps) {
       }
     };
   }, [currentQuestion, isRevealed, handleReveal]);
+
+  useEffect(() => {
+    if (currentQuestion && inputRef.current) {
+      // A tiny timeout ensures the browser has painted 
+      // the new question's UI before focusing
+      const timeoutId = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [currentQuestion]); // Triggers every time a new question is set
+  
+
+
 
   const handleSkip = useCallback(() => {
     if (!currentQuestion) return;
