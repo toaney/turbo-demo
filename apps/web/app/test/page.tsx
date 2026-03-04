@@ -1,7 +1,11 @@
 "use client"
 
-import { useState, Suspense } from "react"; 
+import { useState, useEffect } from "react"; 
 import TodoItem from "./components/TodoItem";
+
+// questions:
+// do we plan on having Server rendered components?
+// with next js, we need component to match server render, then hydrate with a useEffect after mount
 
 // functional reqs: 
 // 1. user can add todo item
@@ -42,7 +46,11 @@ export default function TestPage() {
 
     console.log("test")
 
-    const [ todos, setTodos ] = useState(MOCK_DATA);
+    const [ todos, setTodos ] = useState([]);
+    // const [ todos, setTodos ] = useState(()=> {
+    //     const savedTodos = localStorage.getItem("my_todo_list");
+    //     return savedTodos ? JSON.parse(savedTodos) : MOCK_DATA;
+    // });
     const [ todoInput, setTodoInput ] = useState("");
 
     const handleAddTodo = () => {
@@ -81,27 +89,37 @@ export default function TestPage() {
         }))
     }
 
+    useEffect(() => {
+        const persistedTodos = localStorage.getItem("my_todo_list");
+        if (persistedTodos) {
+            setTodos(JSON.parse(persistedTodos))
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("my_todo_list", JSON.stringify(todos));
+        return 
+    }, [todos]);
+
     return (
         <>
-            <Suspense fallback="Loading...">
-                <div>
-                    <label htmlFor="todoInput">Add todo item:</label>
-                    <input type="text" id="todoInput" value={todoInput} onChange={(e) => {setTodoInput(e.target.value)}}placeholder="e.g. do the laundry"></input> 
-                    <button onClick={handleAddTodo}>Add Todo Item</button>
-                    <ul>    
-                        {todos.map((item)=> (
-                            <TodoItem
-                                key={item.id}
-                                item={item}
-                                // toggleItemComplete={toggleItemComplete}
-                                // deleteItem={deleteItem}
-                                // editItem={editItem}
-                                actions={{toggleItemComplete, deleteItem, editItem}}
-                            />
-                        ))} 
-                    </ul>
-                </div>
-            </Suspense>
+            <div>
+                <label htmlFor="todoInput">Add todo item:</label>
+                <input type="text" id="todoInput" value={todoInput} onChange={(e) => {setTodoInput(e.target.value)}}placeholder="e.g. do the laundry"></input> 
+                <button onClick={handleAddTodo}>Add Todo Item</button>
+                <ul>    
+                    {todos.map((item)=> (
+                        <TodoItem
+                            key={item.id}
+                            item={item}
+                            // toggleItemComplete={toggleItemComplete}
+                            // deleteItem={deleteItem}
+                            // editItem={editItem}
+                            actions={{toggleItemComplete, deleteItem, editItem}}
+                        />
+                    ))} 
+                </ul>
+            </div>
         </>    
     )
 }
