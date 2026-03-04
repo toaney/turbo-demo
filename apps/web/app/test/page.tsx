@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import TodoItem from "./components/TodoItem";
 
 // questions:
-// do we plan on having Server rendered components?
+// do we plan on having (SSR) Server Side Rendered components?
 // with next js, we need component to match server render, then hydrate with a useEffect after mount
 
 // functional reqs: 
@@ -15,6 +15,9 @@ import TodoItem from "./components/TodoItem";
 // 5. differntiates completed todo items
 // 6. displays todo items
 
+// TODO: 
+// 1. make input fields responsive to "enter" key press
+
 
 // TODO item json schema
 // {
@@ -22,6 +25,7 @@ import TodoItem from "./components/TodoItem";
 //    text: string;
 //    isCompleted: boolean;
 // }
+
 
 // mock data
 const MOCK_DATA = [
@@ -46,7 +50,15 @@ export default function TestPage() {
 
     console.log("test")
 
-    const [ todos, setTodos ] = useState([]);
+    const [todos, setTodos] = useState(() => {
+        if (typeof window !== 'undefined'){
+            const persistedTodos = localStorage.getItem("my_todo_list");
+            return persistedTodos? JSON.parse(persistedTodos) : MOCK_DATA;
+        }
+        // return []
+    })
+    // const [ todos, setTodos ] = useState([]);
+    //
     // const [ todos, setTodos ] = useState(()=> {
     //     const savedTodos = localStorage.getItem("my_todo_list");
     //     return savedTodos ? JSON.parse(savedTodos) : MOCK_DATA;
@@ -89,12 +101,12 @@ export default function TestPage() {
         }))
     }
 
-    useEffect(() => {
-        const persistedTodos = localStorage.getItem("my_todo_list");
-        if (persistedTodos) {
-            setTodos(JSON.parse(persistedTodos))
-        }
-    }, []);
+    // useEffect(() => {
+    //     const persistedTodos = localStorage.getItem("my_todo_list");
+    //     if (persistedTodos) {
+    //         setTodos(JSON.parse(persistedTodos))
+    //     }
+    // }, []);
 
     useEffect(() => {
         localStorage.setItem("my_todo_list", JSON.stringify(todos));
